@@ -116,6 +116,7 @@ async function init(){
     console.log(baseDir);
 
     shaderDir = baseDir + "shaders/";
+    
     modelsDir = baseDir + "models/";
 
     // load vertex and fragment shaders from file
