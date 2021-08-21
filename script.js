@@ -7,7 +7,6 @@ var modelsDir;
 //MESHES
 var ballMesh;
 
-var allMeshes;
 
 function main(){
   gl.clearColor(0.85, 0.85, 0.85, 1.0);
@@ -67,7 +66,7 @@ function main(){
       var projectionMatrix = utils.multiplyMatrices(perspectiveMatrix, worldViewMatrix);  
 
       // matrix to transform normals, used by the Vertex Shader
-      var normalTransformationMatrix = utils.invertMatrix(utils.transposeMatrix(worldViewMatrix));
+      var normalTransformationMatrix = utils.invertMatrix(utils.transposeMatrix(worldMatrix)); 
 
       gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
       gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalTransformationMatrix));
@@ -128,9 +127,18 @@ async function init(){
   }
 
   async function loadMeshes(){
-    ballMesh = await utils.loadMesh(modelsDir + "ball.obj");
+
+    ballMesh = await loadMesh(modelsDir + "ball.obj");
+    //utils.loadMesh(modelsDir + "ball.obj");
   
     allMeshes = [ballMesh];
+  }
+
+  async function loadMesh(path){
+    let str = await utils.get_objstr(path);
+    let mesh = new OBJ.Mesh(str);
+
+    return mesh;
   }
 
 }
