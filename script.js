@@ -16,10 +16,10 @@ function main(){
 
   var positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
   var normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
-  var uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
+  //var uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
   
   var matrixLocation = gl.getUniformLocation(program, "matrix");
-  
+  var normalMatrixPositionHandle = gl.getUniformLocation(program, "nMatrix");
 
 
   var perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100.0);
@@ -67,10 +67,10 @@ function main(){
       var projectionMatrix = utils.multiplyMatrices(perspectiveMatrix, worldViewMatrix);  
 
       // matrix to transform normals, used by the Vertex Shader
-      //var normalTransformationMatrix = utils.invertMatrix(utils.transposeMatrix(worldViewMatrix));
+      var normalTransformationMatrix = utils.invertMatrix(utils.transposeMatrix(worldViewMatrix));
 
       gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
-      //gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalTransformationMatrix));
+      gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalTransformationMatrix));
       
       //gl.uniformMatrix4fv(worldViewMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(worldViewMatrix));
       
@@ -113,10 +113,8 @@ async function init(){
     var path = window.location.pathname;
     var page = path.split("/").pop();
     baseDir = window.location.href.replace(page, '');
-    console.log(baseDir);
 
     shaderDir = baseDir + "shaders/";
-    
     modelsDir = baseDir + "models/";
 
     // load vertex and fragment shaders from file
