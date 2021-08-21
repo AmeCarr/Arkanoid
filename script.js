@@ -12,6 +12,7 @@ function main(){
   gl.clearColor(0.85, 0.85, 0.85, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST); 
+  gl.enable(gl.CULL_FACE);
 
   var positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
   var normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
@@ -136,7 +137,7 @@ async function init(){
 
   async function loadMeshes(){
 
-    ballMesh = await loadMesh(modelsDir + "ball.obj");
+    ballMesh = await loadMesh(modelsDir + "ball_prova2.obj");
     //utils.loadMesh(modelsDir + "ball.obj");
   
     allMeshes = [ballMesh];
