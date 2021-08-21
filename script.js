@@ -1,5 +1,5 @@
 //relevant paths to resources
-var program;
+var program = null;
 var baseDir;
 var shaderDir;
 var modelsDir;
@@ -15,11 +15,12 @@ function main(){
 
   var positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
   var normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
-  //var uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
+  var uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
   
   var matrixLocation = gl.getUniformLocation(program, "matrix");
   var normalMatrixPositionHandle = gl.getUniformLocation(program, "nMatrix");
-
+  var vertexMatrixPositionHandle = gl.getUniformLocation(program, "pMatrix");
+  
 
   var perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100.0);
   var vaos = new Array(allMeshes.length);
@@ -35,6 +36,12 @@ function main(){
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertices), gl.STATIC_DRAW);
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+
+    var uvBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.textures), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(uvAttributeLocation);
+    gl.vertexAttribPointer(uvAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
     var normalBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
@@ -56,7 +63,7 @@ function main(){
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
     
-    var viewMatrix = utils.MakeView(2.0, 0.0, 0.0, 0.0, 0.0);
+    var viewMatrix = utils.MakeView(0.0, 0.0, 2.0, 0.0, 0.0);
     var worldMatrix = utils.MakeWorld(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
     
 
@@ -69,6 +76,7 @@ function main(){
       var normalTransformationMatrix = utils.invertMatrix(utils.transposeMatrix(worldMatrix)); 
 
       gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
+      gl.uniformMatrix4fv(vertexMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(worldMatrix));
       gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalTransformationMatrix));
       
       //gl.uniformMatrix4fv(worldViewMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(worldViewMatrix));
