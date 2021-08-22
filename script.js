@@ -137,7 +137,7 @@ async function init(){
 
   async function loadMeshes(){
 
-    ballMesh = await loadMesh(modelsDir + "ball_prova2.obj");
+    ballMesh = await loadMesh(modelsDir + "prova_gino10.obj");
     //utils.loadMesh(modelsDir + "ball.obj");
   
     allMeshes = [ballMesh];
