@@ -1,5 +1,5 @@
 //relevant paths to resources
-var program = null;
+var program;
 var baseDir;
 var shaderDir;
 var modelsDir;
@@ -9,11 +9,12 @@ var ballMesh;
 
 
 function main(){
-  gl.clearColor(0.85, 0.85, 0.85, 1.0);
+  gl.clearColor(0.0, 0.0, 0.0, 0.0); //flipper --> 0.85, 0.85, 0.85, 1.0
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST); 
-  gl.enable(gl.CULL_FACE);
+  //gl.enable(gl.CULL_FACE);
 
+  
   var positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
   var normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
   var uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
@@ -60,9 +61,17 @@ function main(){
 
 
   function drawScene(){
-    // clear scene
-    gl.clearColor(0.0, 0.0, 0.0, 0.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
+    // clear scene in flipper
+    //gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
+
+    //clear scene in exercises 05, Texture cube 2
+    utils.resizeCanvasToDisplaySize(gl.canvas);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
     
     var viewMatrix = utils.MakeView(0.0, 0.0, 2.0, 0.0, 0.0);
     var worldMatrix = utils.MakeWorld(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
@@ -99,7 +108,6 @@ async function init(){
   setupCanvas();
   loadShaders();
   await loadMeshes();
-  main ();
 
 
 // prepare canvas and body styles
@@ -125,24 +133,16 @@ async function init(){
     shaderDir = baseDir + "shaders/";
     modelsDir = baseDir + "models/";
 
-    // load vertex and fragment shaders from file
-    await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
-      var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
-      var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
-      program = utils.createProgram(gl, vertexShader, fragmentShader);
-
-    });
-    gl.useProgram(program);
+    
   }
 
   async function loadMeshes(){
-
-    ballMesh = await loadMesh(modelsDir + "prova_gino10.obj");
-    //utils.loadMesh(modelsDir + "ball.obj");
+    ballMesh = await utils.loadMesh((modelsDir + "prova_ginos.obj"));
   
     allMeshes = [ballMesh];
   }
 
+  //if utils.loadMesh not working
   async function loadMesh(path){
     let str = await utils.get_objstr(path);
     let mesh = new OBJ.Mesh(str);
@@ -150,6 +150,19 @@ async function init(){
     return mesh;
   }
 
+
+  //load vertex and fragment shaders from file
+    await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
+      var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
+      var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
+      program = utils.createProgram(gl, vertexShader, fragmentShader);
+
+    });
+
+    gl.useProgram(program);
+
+  //at the end of function init call main
+  main();
 }
 
 window.onload = init;
