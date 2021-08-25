@@ -11,8 +11,8 @@ out vec2 fsUV;
 out vec3 fs_pos; 
 
 uniform mat4 matrix; //worldViewProjection matrix to draw objects
-uniform mat4 nMatrix; //matrix to transform normals
-uniform mat4 pMatrix; //matrix to transform positions
+uniform mat4 nMatrix; //matrix to transform normals in world space shading
+uniform mat4 pMatrix; //matrix to transform positions in world space shading
 
 void main() {
   fsUV = in_uv;

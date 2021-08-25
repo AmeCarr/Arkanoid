@@ -1,28 +1,69 @@
+//*****************************************************VARIABLES*********************************************************************************
+
 //relevant paths to resources
 var program;
+var gl;
+var canvas;
+
 var baseDir;
 var shaderDir;
 var modelsDir;
 
-//MESHES
+//meshes
 var ballMesh;
+var paddleMesh;
+var blockMesh;
+var WallMesh;
 
+//meshes list
+var allMeshes = null;
 
+//texture variables
+var texture;
+var image = new Image();
+
+//vertex shader
+var positionAttributeLocation;
+var normalAttributeLocation;
+var uvAttributeLocation;
+var matrixLocation;
+var normalMatrixPositionHandle;
+var vertexMatrixPositionHandle;
+
+//fragment shader
+var textureHandle;
+
+//********************************************************************************************************************************************
 function main(){
-  gl.clearColor(0.0, 0.0, 0.0, 0.0); //flipper --> 0.85, 0.85, 0.85, 1.0
+  gl.clearColor(1.0, 1.0, 1.0, 1.0); //flipper --> 0.85, 0.85, 0.85, 1.0
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST); 
-  //gl.enable(gl.CULL_FACE);
 
   
-  var positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
-  var normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
-  var uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
+  // get texture, send in buffer
+    texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    image.src = baseDir + "textures/16colors_palette.png";
+    image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.generateMipmap(gl.TEXTURE_2D);
+    };
+
+
+  positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
+  normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
+  uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
   
-  var matrixLocation = gl.getUniformLocation(program, "matrix");
-  var normalMatrixPositionHandle = gl.getUniformLocation(program, "nMatrix");
-  var vertexMatrixPositionHandle = gl.getUniformLocation(program, "pMatrix");
+  matrixLocation = gl.getUniformLocation(program, "matrix");
+  normalMatrixPositionHandle = gl.getUniformLocation(program, "nMatrix");
+  vertexMatrixPositionHandle = gl.getUniformLocation(program, "pMatrix");
   
+  textureHandle = gl.getUniformLocation(program, "in_texture");
 
   var perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100.0);
   var vaos = new Array(allMeshes.length);
@@ -62,35 +103,30 @@ function main(){
 
   function drawScene(){
     // clear scene in flipper
-    //gl.clearColor(0.0, 0.0, 0.0, 0.0);
-    //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
-
-    //clear scene in exercises 05, Texture cube 2
-    utils.resizeCanvasToDisplaySize(gl.canvas);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.enable(gl.DEPTH_TEST);
-    gl.enable(gl.CULL_FACE);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
     
     var viewMatrix = utils.MakeView(0.0, 0.0, 2.0, 0.0, 0.0);
     var worldMatrix = utils.MakeWorld(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
     
+    //pass uniforms to fs here
 
     // add each mesh / object with its world matrix
     for (var i = 0; i < allMeshes.length; i++) {
       var worldViewMatrix = utils.multiplyMatrices(viewMatrix, worldMatrix);
       var projectionMatrix = utils.multiplyMatrices(perspectiveMatrix, worldViewMatrix);  
 
-      // matrix to transform normals, used by the Vertex Shader
+      // matrix to transform normals in world shading space, used by the Vertex Shader
       var normalTransformationMatrix = utils.invertMatrix(utils.transposeMatrix(worldMatrix)); 
 
       gl.uniformMatrix4fv(matrixLocation, gl.FALSE, utils.transposeMatrix(projectionMatrix));
       gl.uniformMatrix4fv(vertexMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(worldMatrix));
       gl.uniformMatrix4fv(normalMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(normalTransformationMatrix));
       
-      //gl.uniformMatrix4fv(worldViewMatrixPositionHandle, gl.FALSE, utils.transposeMatrix(worldViewMatrix));
-      
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.uniform1i(textureHandle, 0);
+
 
       gl.bindVertexArray(vaos[i]);
       gl.drawElements(gl.TRIANGLES, allMeshes[i].indices.length, gl.UNSIGNED_SHORT, 0);
@@ -105,64 +141,58 @@ function main(){
 }
 
 async function init(){
-  setupCanvas();
-  loadShaders();
-  await loadMeshes();
+    setupCanvas();
+    await loadShaders();
+    await loadMeshes();
+    main ();
 
+    // prepare canvas and body styles
+    function setupCanvas(){
+      canvas = document.getElementById("canvas");
+      gl = canvas.getContext("webgl2");
 
-// prepare canvas and body styles
-  function setupCanvas(){
-    var canvas = document.getElementById("canvas");
-    gl = canvas.getContext("webgl2");
-
-    if (!gl) {
-      document.write("GL context not opened");
-      return;
+      if (!gl) {
+        document.write("GL context not opened");
+        return;
+      }
+      utils.resizeCanvasToDisplaySize(canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     }
-    utils.resizeCanvasToDisplaySize(canvas);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  }
 
-//load shaders
-  async function loadShaders() {
-    // initialize resource paths
-    var path = window.location.pathname;
-    var page = path.split("/").pop();
-    baseDir = window.location.href.replace(page, '');
+    //load shaders
+    async function loadShaders() {
+      // initialize resource paths
+      var path = window.location.pathname;
+      var page = path.split("/").pop();
+      baseDir = window.location.href.replace(page, '');
 
-    shaderDir = baseDir + "shaders/";
-    modelsDir = baseDir + "models/";
+      shaderDir = baseDir + "shaders/";
+      modelsDir = baseDir + "models/";
 
+       //load vertex and fragment shaders from file
+      await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
+        var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
+        var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
+        program = utils.createProgram(gl, vertexShader, fragmentShader);
+      });
+
+      gl.useProgram(program);
+    }
+
+    async function loadMeshes(){
+      ballMesh = await utils.loadMesh((modelsDir + "whiteBall.obj"));
     
-  }
+      allMeshes = [ballMesh];
+    }
 
-  async function loadMeshes(){
-    ballMesh = await utils.loadMesh((modelsDir + "prova_ginos.obj"));
-  
-    allMeshes = [ballMesh];
-  }
+    //if utils.loadMesh not working
+    async function loadMesh(path){
+      let str = await utils.get_objstr(path);
+      let mesh = new OBJ.Mesh(str);
 
-  //if utils.loadMesh not working
-  async function loadMesh(path){
-    let str = await utils.get_objstr(path);
-    let mesh = new OBJ.Mesh(str);
+      return mesh;
+    }
 
-    return mesh;
-  }
-
-
-  //load vertex and fragment shaders from file
-    await utils.loadFiles([shaderDir + 'vs.glsl', shaderDir + 'fs.glsl'], function (shaderText) {
-      var vertexShader = utils.createShader(gl, gl.VERTEX_SHADER, shaderText[0]);
-      var fragmentShader = utils.createShader(gl, gl.FRAGMENT_SHADER, shaderText[1]);
-      program = utils.createProgram(gl, vertexShader, fragmentShader);
-
-    });
-
-    gl.useProgram(program);
-
-  //at the end of function init call main
-  main();
 }
 
 window.onload = init;
