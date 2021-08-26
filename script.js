@@ -31,13 +31,13 @@ var normalMatrixPositionHandle;
 var vertexMatrixPositionHandle;
 
 //fragment shader
-var textureHandle;
+var textureLocation;
 
 //********************************************************************************************************************************************
 function main(){
   gl.clearColor(1.0, 1.0, 1.0, 1.0); //flipper --> 0.85, 0.85, 0.85, 1.0
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  gl.enable(gl.DEPTH_TEST); 
+  gl.enable(gl.DEPTH_TEST);
 
   
   // get texture, send in buffer
@@ -54,6 +54,9 @@ function main(){
         gl.generateMipmap(gl.TEXTURE_2D);
     };
 
+  console.log(image);
+
+  resetGame();
 
   positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
   normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
@@ -63,7 +66,7 @@ function main(){
   normalMatrixPositionHandle = gl.getUniformLocation(program, "nMatrix");
   vertexMatrixPositionHandle = gl.getUniformLocation(program, "pMatrix");
   
-  textureHandle = gl.getUniformLocation(program, "in_texture");
+  textureLocation = gl.getUniformLocation(program, "in_texture");
 
   var perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100.0);
   var vaos = new Array(allMeshes.length);
@@ -125,7 +128,7 @@ function main(){
       
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.uniform1i(textureHandle, 0);
+      gl.uniform1i(textureLocation, 0);
 
 
       gl.bindVertexArray(vaos[i]);
@@ -144,6 +147,7 @@ async function init(){
     setupCanvas();
     await loadShaders();
     await loadMeshes();
+
     main ();
 
     // prepare canvas and body styles
@@ -180,7 +184,7 @@ async function init(){
     }
 
     async function loadMeshes(){
-      ballMesh = await utils.loadMesh((modelsDir + "whiteBall.obj"));
+      ballMesh = await utils.loadMesh((modelsDir + "ball_whiteSkin.obj"));
     
       allMeshes = [ballMesh];
     }

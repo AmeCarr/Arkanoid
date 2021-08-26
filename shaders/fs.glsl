@@ -6,8 +6,7 @@ in vec3 fsNormal;
 in vec3 fs_pos;
 in vec2 fsUV;
 
-//texture
-uniform sampler2d in_texture;
+uniform sampler2D in_texture;
 
 out vec4 outColor;
 

@@ -4,32 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style type="text/css">
-      body {
-        margin: 0;
-        background-color: gray;
-      }
-      canvas {
-        display: block;
-        background-color: white;
-      }
-    </style>
+    <title>Arkanoid</title>
+
+
+    <!-- Libraries --> 
+    <script type="text/javascript" src="libraries/utils.js"></script>
+    <script type="text/javascript" src="libraries/webgl-obj-loader.min.js"></script>
+
+    <!--Scripts-->
+    <script type="text/javascript" src="logic/controller.js"></script>   
+ 
+    <script type="text/javascript" src="script.js"></script>
+  
 </head>
 
 
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas">
+    Your browser does not support the HTML5 canvas element.
+  </canvas>
 
-  <!-- Libraries --> 
-  <script type="text/javascript" src="libraries/utils.js"></script>
-  <script type="text/javascript" src="libraries/webgl-obj-loader.min.js"></script>
-
-
-
-  <!--Scripts-->
-  <script type="text/javascript" src="gameLogic/controller.js"></script>
-  
-  <script type="text/javascript" src="script.js"></script>
 
 
 </body>

@@ -3,5 +3,5 @@ var currentTime;
 var deltaTime;
 
 function resetGame(){
-
+	console.log(lastUpdateTime);
 }
