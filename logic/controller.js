@@ -2,6 +2,7 @@ var lastUpdateTime = (new Date).getTime();
 var currentTime;
 var deltaTime;
 
-function resetGame(){
-	console.log(lastUpdateTime);
+function startGame(){
+	console.log("waglio gioca");
+
 }

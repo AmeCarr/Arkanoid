@@ -4,7 +4,6 @@
 var program;
 var gl;
 var canvas;
-
 var baseDir;
 var shaderDir;
 var modelsDir;
@@ -12,11 +11,13 @@ var modelsDir;
 //meshes
 var ballMesh;
 var paddleMesh;
-var blockMesh;
-var WallMesh;
+var brickYellowMesh;
+var brickOrangeMesh;
+var brickRedMesh;
+//var WallMesh;TODO
 
 //meshes list
-var allMeshes = null;
+var allMeshes = [];
 
 //texture variables
 var texture;
@@ -33,9 +34,12 @@ var vertexMatrixPositionHandle;
 //fragment shader
 var textureLocation;
 
+var perspectiveMatrix;
+var vaos;
+
 //********************************************************************************************************************************************
 function main(){
-  gl.clearColor(1.0, 1.0, 1.0, 1.0); //flipper --> 0.85, 0.85, 0.85, 1.0
+  gl.clearColor(0.85, 0.85, 0.85, 1.0); //flipper --> 0.85, 0.85, 0.85, 1.0
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
 
@@ -54,10 +58,6 @@ function main(){
         gl.generateMipmap(gl.TEXTURE_2D);
     };
 
-  console.log(image);
-
-  resetGame();
-
   positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
   normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
   uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
@@ -68,8 +68,8 @@ function main(){
   
   textureLocation = gl.getUniformLocation(program, "in_texture");
 
-  var perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100.0);
-  var vaos = new Array(allMeshes.length);
+  perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100.0);
+  vaos = new Array(allMeshes.length);
 
   function addMeshToScene(i) {
     let mesh = allMeshes[i];
@@ -147,7 +147,7 @@ async function init(){
     setupCanvas();
     await loadShaders();
     await loadMeshes();
-
+    startGame();
     main ();
 
     // prepare canvas and body styles
@@ -184,17 +184,24 @@ async function init(){
     }
 
     async function loadMeshes(){
+      //ball: 2x2x2
+      //paddle: 1 altezza 2 spessore 6 lunghezza
+      //brick: 1 altezza 2 spessore 4 lunghezza
       ballMesh = await utils.loadMesh((modelsDir + "ball_whiteSkin.obj"));
-    
-      allMeshes = [ballMesh];
-    }
+      paddleMesh = await utils.loadMesh((modelsDir + "paddle_blueSkin.obj"));
+      brickYellowMesh = await utils.loadMesh((modelsDir + "brick_yellowSkin.obj"));
+      brickOrangeMesh = await utils.loadMesh((modelsDir + "brick_orangeSkin.obj"));
+      brickRedMesh = await utils.loadMesh((modelsDir + "brick_redSkin.obj"));
 
-    //if utils.loadMesh not working
-    async function loadMesh(path){
-      let str = await utils.get_objstr(path);
-      let mesh = new OBJ.Mesh(str);
+      allMeshes = [ 
+                    ballMesh,
+                    paddleMesh,
+                    brickYellowMesh,
+                    brickOrangeMesh,
+                    brickRedMesh
+                    ];
 
-      return mesh;
+      //TODO: load here other bricks allMeshes.push()....
     }
 
 }
