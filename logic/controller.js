@@ -8,6 +8,10 @@ var currentNumBricks = 0;
 //objects
 var ball = null;
 var paddle = null;
+var wallLeft = null;
+var wallRight = null;
+var wallUp = null;
+
 var bricksList = [];
 var wallsList = [];
 
@@ -24,11 +28,12 @@ function initializeObjects(){
 
 	ball = new Ball(new Vec2(0, BALL_Y), new Vec2(1, 1));
     paddle = new Paddle(new Vec2(0, PADDLE_Y), new Vec2(1, 1));
-    //wallR = new Wall(new Vec2(-15.5, 0), new Vec2(0.5, 14));
-    //wallL = new Wall(new Vec2(15.5, 0), new Vec2(0.5, 14));
-    //wallU = new Wall(new Vec2(0, -13.5), new Vec2(16, 0.5));
+    wallLeft = new Wall(new Vec2(-29, -3), new Vec2(1, 1));
+    wallRight = new Wall(new Vec2(32, -3), new Vec2(1, 1));
 
-    objectsList.push(ball, paddle); //, wallR, wallL, wallU
+    wallUp = new Wall(new Vec2(1.5, -21.5), new Vec2(1, 1));
+
+    objectsList.push(ball, paddle, wallLeft, wallRight, wallUp); 
 
     let xStart = -23.2;
     let xStep = 4.1;
@@ -42,8 +47,8 @@ function initializeObjects(){
         }
     }
 
-    //wallsList = objectsList.slice(2, 5);
-    bricksList = objectsList.slice(2, objectsList.length);
+    wallsList = objectsList.slice(2, 5);
+    bricksList = objectsList.slice(5, objectsList.length);
 
     maxNumBricks = bricksList.length;
     currentNumBricks = maxNumBricks;

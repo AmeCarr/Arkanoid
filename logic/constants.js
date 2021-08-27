@@ -3,7 +3,7 @@ const BALL_RADIUS = 1;
 
 let PADDLE_SPEED = 0.013;
 
-const PADDLE_Y = 13.75;
+const PADDLE_Y = 14;
 const BALL_Y = 12;
 
 const PADDLE_WALL_PADDING = 0.3;

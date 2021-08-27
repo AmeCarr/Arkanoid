@@ -14,6 +14,10 @@ var paddleMesh;
 var brickYellowMesh;
 var brickOrangeMesh;
 var brickRedMesh;
+var wallMeshLeft;
+var wallMeshRight;
+var wallMeshUp;
+
 //var WallMesh;TODO
 
 //meshes list
@@ -195,10 +199,16 @@ async function init(){
       //ball: 2x2x2
       //paddle: 1 altezza 2 spessore 6 lunghezza
       //brick: 1 altezza 2 spessore 4 lunghezza
+      //wall lateral: 35 altezza 2 spessore 2 lunghezza
+      //wall upper: 2 altezza 2 spessore 63 lunghezza
+
       ballMesh = await utils.loadMesh((modelsDir + "ball_whiteSkin.obj"));
       paddleMesh = await utils.loadMesh((modelsDir + "paddle_blueSkin.obj"));
+      wallMeshLeft = await utils.loadMesh((modelsDir + "wall_lateral_brownSkin.obj"));
+      wallMeshRight = await utils.loadMesh((modelsDir + "wall_lateral_brownSkin.obj"));
+      wallMeshUp = await utils.loadMesh((modelsDir + "wall_upper_brownSkin.obj"))
 
-      allMeshes = [ballMesh,paddleMesh];
+      allMeshes = [ballMesh,paddleMesh, wallMeshLeft, wallMeshRight, wallMeshUp];
 
       // load bricks
       for(let i = 0; i < 13; i++)
