@@ -71,7 +71,7 @@ function main(){
 
 
   perspectiveMatrix = utils.MakeOrthogonal(gl.canvas.width/45, gl.canvas.width / gl.canvas.height, 1, 100);
-
+  //perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100 );
   vaos = new Array(allMeshes.length);
 
   function addMeshToScene(i) {
@@ -117,7 +117,7 @@ function main(){
 
     updateMatrices();
 
-    var viewMatrix = utils.MakeView(0.0, 0.0, 5.0, 0.0, 0.0);//TODO
+    var viewMatrix = utils.MakeView(0.0, 30.0, 0.0, -90.0, 0.0);//TODO
 
     //pass uniforms to fs here
 
@@ -197,20 +197,16 @@ async function init(){
       //brick: 1 altezza 2 spessore 4 lunghezza
       ballMesh = await utils.loadMesh((modelsDir + "ball_whiteSkin.obj"));
       paddleMesh = await utils.loadMesh((modelsDir + "paddle_blueSkin.obj"));
-      
-      brickYellowMesh = await utils.loadMesh((modelsDir + "brick_yellowSkin.obj"));
-      brickOrangeMesh = await utils.loadMesh((modelsDir + "brick_orangeSkin.obj"));
-      brickRedMesh = await utils.loadMesh((modelsDir + "brick_redSkin.obj"));
 
-      allMeshes = [ 
-                    ballMesh,
-                    paddleMesh,
-                    brickYellowMesh,
-                    brickOrangeMesh,
-                    brickRedMesh
-                    ];
+      allMeshes = [ballMesh,paddleMesh];
 
-      //TODO: load here other bricks allMeshes.push()....
+      // load bricks
+      for(let i = 0; i < 13; i++)
+          allMeshes.push(await utils.loadMesh(modelsDir + "brick_yellowSkin.obj"))
+      for(let i = 0; i < 13; i++)
+          allMeshes.push(await utils.loadMesh(modelsDir + "brick_orangeSkin.obj"))
+      for(let i = 0; i < 13; i++)
+          allMeshes.push(await utils.loadMesh(modelsDir + "brick_redSkin.obj"))
     }
 
 }

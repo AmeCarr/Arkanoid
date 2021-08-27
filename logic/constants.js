@@ -1,4 +1,4 @@
-let BALL_SPEED = 0.015;
+let BALL_SPEED = 0.025;
 const BALL_RADIUS = 1;
 
 let PADDLE_SPEED = 0.013;

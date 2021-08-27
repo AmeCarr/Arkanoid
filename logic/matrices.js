@@ -24,16 +24,16 @@ function initializeMatrices() { //forceUpdateMatrices()
 
 
 function updateMatrix(object, index) {
-    currentMatricesList[index] = utils.MakeWorld(
+    currentMatricesList[index] = utils.MakeGenericWorld(
         object.position.x,
         0, // always zero for this project
         object.position.y,
         0, // always zero for this project
         0, // always zero for this project
         0, // always zero for this project
-        object.scale.x //,
-        //0.5, // always one for this project
-        //object.scale.y
+        object.scale.x,
+        1, // always one for this project
+        object.scale.y
     );
     object.hasChanged = false;
 }
