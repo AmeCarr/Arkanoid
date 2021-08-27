@@ -654,6 +654,18 @@ createProgram:function(gl, vertexShader, fragmentShader) {
 		perspective[15] = 0.0;	
 
 		return perspective;
-	}
+	},
 
+	MakeOrthogonal:function(w, a, n, f)
+	{
+		var perspective = this.identityMatrix();
+
+		perspective[0] = 1 / w;
+		perspective[5] = a / w;
+		perspective[10] = -2 / (f - n);
+		perspective[11] = - (f + n)/(f - n);
+		perspective[15] = 1;
+
+		return perspective;
+	}
 }

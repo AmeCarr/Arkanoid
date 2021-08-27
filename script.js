@@ -58,6 +58,7 @@ function main(){
         gl.generateMipmap(gl.TEXTURE_2D);
     };
 
+  //vertex shader 
   positionAttributeLocation = gl.getAttribLocation(program, "inPosition");
   normalAttributeLocation = gl.getAttribLocation(program, "inNormal");
   uvAttributeLocation = gl.getAttribLocation(program, "in_uv");
@@ -68,7 +69,9 @@ function main(){
   
   textureLocation = gl.getUniformLocation(program, "in_texture");
 
-  perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100.0);
+
+  perspectiveMatrix = utils.MakeOrthogonal(gl.canvas.width/45, gl.canvas.width / gl.canvas.height, 1, 100);
+
   vaos = new Array(allMeshes.length);
 
   function addMeshToScene(i) {
@@ -109,15 +112,20 @@ function main(){
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
     
-    var viewMatrix = utils.MakeView(0.0, 0.0, 2.0, 0.0, 0.0);
-    var worldMatrix = utils.MakeWorld(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-    
+    //update game state, animations
+    updateGameState();
+
+    updateMatrices();
+
+    var viewMatrix = utils.MakeView(0.0, 0.0, 5.0, 0.0, 0.0);//TODO
+
     //pass uniforms to fs here
 
     // add each mesh / object with its world matrix
     for (var i = 0; i < allMeshes.length; i++) {
+      var worldMatrix = currentMatricesList[i];
       var worldViewMatrix = utils.multiplyMatrices(viewMatrix, worldMatrix);
-      var projectionMatrix = utils.multiplyMatrices(perspectiveMatrix, worldViewMatrix);  
+      var projectionMatrix = utils.multiplyMatrices(perspectiveMatrix, worldViewMatrix);  //WVP 
 
       // matrix to transform normals in world shading space, used by the Vertex Shader
       var normalTransformationMatrix = utils.invertMatrix(utils.transposeMatrix(worldMatrix)); 
@@ -147,7 +155,7 @@ async function init(){
     setupCanvas();
     await loadShaders();
     await loadMeshes();
-    startGame();
+    initializeGame();
     main ();
 
     // prepare canvas and body styles
@@ -189,6 +197,7 @@ async function init(){
       //brick: 1 altezza 2 spessore 4 lunghezza
       ballMesh = await utils.loadMesh((modelsDir + "ball_whiteSkin.obj"));
       paddleMesh = await utils.loadMesh((modelsDir + "paddle_blueSkin.obj"));
+      
       brickYellowMesh = await utils.loadMesh((modelsDir + "brick_yellowSkin.obj"));
       brickOrangeMesh = await utils.loadMesh((modelsDir + "brick_orangeSkin.obj"));
       brickRedMesh = await utils.loadMesh((modelsDir + "brick_redSkin.obj"));
