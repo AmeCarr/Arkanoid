@@ -18,6 +18,11 @@ var wallsList = [];
 //objects list
 var objectsList = [];
 
+//mouse variables
+var lastMouseX = -100;
+var lastMouseY = -100;
+var mouseState = false;
+var lookRadius = LOOK_RADIUS;
 
 function initializeObjects(){
 	 /**
@@ -67,4 +72,49 @@ function initializeGame(){ //resetGame()
 
 function updateGameState(){
 
+}
+
+
+function setUpMouseControls(){
+  // add mouse controls for 3D movement
+    canvas.addEventListener("mousedown", doMouseDown, false);
+    canvas.addEventListener("mouseup", doMouseUp, false);
+    canvas.addEventListener("mousemove", doMouseMove, false);
+    canvas.addEventListener("mousewheel", doMouseWheel, false);
+}
+
+function doMouseDown(event) {
+    lastMouseX = event.pageX;
+    lastMouseY = event.pageY;
+    mouseState = true;
+}
+
+function doMouseUp() {
+    lastMouseX = -100;
+    lastMouseY = -100;
+    mouseState = false;
+}
+
+function doMouseMove(event) {
+    if(mouseState ) {  //&& ThreeDOn
+        let dx = event.pageX - lastMouseX;
+        let dy = lastMouseY - event.pageY;
+        lastMouseX = event.pageX;
+        lastMouseY = event.pageY;
+
+        if((dx !== 0) || (dy !== 0)) {
+            angle = angle + 0.5 * dx;
+            elevation = elevation + 0.5 * dy;
+        }
+    }
+}
+
+function doMouseWheel(event) {
+    //if(ThreeDOn)
+    //{
+        let nLookRadius = lookRadius + event.wheelDelta/250.0;
+        if((nLookRadius > 10.0) && (nLookRadius < 75.0)) {
+            lookRadius = nLookRadius;
+        }
+    //}
 }

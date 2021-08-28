@@ -8,6 +8,14 @@ var baseDir;
 var shaderDir;
 var modelsDir;
 
+//camera variables
+var cx = CX;
+var cy = CY;
+var cz = CZ;
+var elevation = ELEVATION;
+var angle = ANGLE;
+var lookRadius = LOOK_RADIUS;
+
 //meshes
 var ballMesh;
 var paddleMesh;
@@ -17,8 +25,6 @@ var brickRedMesh;
 var wallMeshLeft;
 var wallMeshRight;
 var wallMeshUp;
-
-//var WallMesh;TODO
 
 //meshes list
 var allMeshes = [];
@@ -73,8 +79,8 @@ function main(){
   
   textureLocation = gl.getUniformLocation(program, "in_texture");
 
-
-  perspectiveMatrix = utils.MakeOrthogonal(gl.canvas.width/45, gl.canvas.width / gl.canvas.height, 1, 100);
+  perspectiveMatrix = utils.MakePerspective(45, gl.canvas.width / gl.canvas.height, 1, 100 );
+  //perspectiveMatrix = utils.MakeOrthogonal(gl.canvas.width/45, gl.canvas.width / gl.canvas.height, 1, 100);
   //perspectiveMatrix = utils.MakePerspective(90, gl.canvas.width / gl.canvas.height, 0.1, 100 );
   vaos = new Array(allMeshes.length);
 
@@ -115,15 +121,21 @@ function main(){
     // clear scene in flipper
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); 
-    
+
+
+    //TODO************************************************************
     //update game state, animations
     updateGameState();
 
     updateMatrices();
+    //*************************************************************************
+    
+    cz = lookRadius * Math.cos(utils.degToRad(-angle)) * Math.cos(utils.degToRad(-elevation));
+    cx = lookRadius * Math.sin(utils.degToRad(-angle)) * Math.cos(utils.degToRad(-elevation));
+    cy = lookRadius * Math.sin(utils.degToRad(-elevation)); 
+    var viewMatrix = utils.MakeView(cx, cy, cz, elevation, angle);//TODO
 
-    var viewMatrix = utils.MakeView(0.0, 30.0, 0.0, -90.0, 0.0);//TODO
-
-    //pass uniforms to fs here
+    //pass uniforms to fs here TODO
 
     // add each mesh / object with its world matrix
     for (var i = 0; i < allMeshes.length; i++) {
@@ -157,9 +169,12 @@ function main(){
 
 async function init(){
     setupCanvas();
+    setUpMouseControls();
+
     await loadShaders();
     await loadMeshes();
-    initializeGame();
+
+    initializeGame();    
     main ();
 
     // prepare canvas and body styles
