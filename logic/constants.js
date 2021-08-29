@@ -11,8 +11,8 @@ const BALL_DEATH_PADDING = 2;
 
 // camera defaults
 const CX = 0;
-const CY = 40;
+const CY = 50;
 const CZ = 0;
-const ELEVATION = -90;
-const ANGLE = 0;
+const ELEV = -90;
+const ANG = 0;
 const LOOK_RADIUS = 50.0;
