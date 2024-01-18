@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Arkanoid</title>
+    <!--background-image: url('backgrounds/arkanoid_theme.png');-->
+    <!-- Libraries --> 
+    <script type="text/javascript" src="libraries/utils.js"></script>
+    <script type="text/javascript" src="libraries/webgl-obj-loader.min.js"></script>
+
+
+    <!--Scripts-->
+    <script type="text/javascript" src="logic/Vec2.js"></script>
+    <script type="text/javascript" src="logic/constants.js"></script>
+    <script type="text/javascript" src="logic/Ball.js"></script>
+    <script type="text/javascript" src="logic/Brick.js"></script>      
+    <script type="text/javascript" src="logic/Paddle.js"></script>
+    <script type="text/javascript" src="logic/Wall.js"></script>      
+
+    <script type="text/javascript" src="logic/matrices.js"></script> 
+    <script type="text/javascript" src="logic/controller.js"></script>  
+
+    <script type="text/javascript" src="lights_variables.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+  
+</head>
+
+
+<body class = "body">
+  <canvas id="canvas">
+    Your browser does not support the HTML5 canvas element.
+  </canvas>
+
+  <div class = "leftDiv">
+    <h1 class="content" id="text">
+            Score  : 0 <br>
+            Lives : 0
+        </h1>
+  </div>
+
+  <div class="rightDiv">
+        <h1 class="content" id="text">
+              COMMANDS: <br>   
+              - "space" to start game <br>
+              - "left arrow" to move paddle left <br>
+              - "right arrow" to move paddle right <br>
+              - "enter" to restart game <br>
+              - Use mouse to change view
+        </h1>
+    </div>
+
+  <div class="lightsDiv">
+        <h2>DIRECTIONAL LIGHT</h2>
+        <div>ALPHA ANGLE OF DIRECTIONAL LIGHT</div>
+        <div><input type="range" min="0" max="180" id="dirLightAlpha" value="0"></div><br/>
+        <div>BETA ANGLE OF DIRECTIONAL LIGHT</div>
+        <div><input type="range" min="-180" max="180" id="dirLightBeta" value="0"></div><br/>
+        <h2>POINT LIGHT</h2>
+        <div>POSITION X</div>
+        <div><input type="range" min="-50" max="50" id="positionX" value="0"></div><br/>
+        <div>POSITION Y </div>
+        <div><input type="range" min="-50" max="50" id="positionY" value="0"></div><br/>
+        <div>POSITION Z</div>
+        <div><input type="range" min="-50" max="50" id="positionZ" value="0"></div><br/>
+  </div>
+
+  <div class="bottomDiv">
+
+         <table class="table" id="userBottomTable" border="1">
+        <tr>
+            <th> Light type </th>
+            <th> Ambient light </th>
+            <th> Diffuse type </th>
+            <th> Specular type </th>
+        </tr>
+        <tr>
+            <!-- Light type -->
+            <td>
+                <div>
+                    <select id="lightType" onchange="changeLightType(this.value);">
+                        <option value="direct">Direct</option>
+                        <option value="point">Point</option>
+                    </select>
+                </div>
+            </td>
+
+            <!-- Ambient light -->
+            <td>
+                <div >
+                    <input type="color" id="ambientLightColor" value="#ffffff">
+                </div>
+            </td>
+
+            <!-- Diffuse type -->
+            <td>
+                <div >
+                    <select id="diffuseType" onchange="changeDiffuseType(this.value);">
+                        <option value="lambert">Lambert</option>
+                        <option value="toon">Toon</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </td>
+
+            <!-- Specular type -->
+            <td>
+                <div >
+                    <select id="specularType" onchange="changeSpecularType(this.value);">
+                        <option value="blinn">Blinn</option>
+                        <option value="phong">Phong</option>
+                        <option value="toonP">Toon (Phong)</option>
+                        <option value="toonB">Toon (Blinn)</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </td>
+
+        </tr>
+    </table>
+  </div>
+
+  <div id="gameOverDiv" class="gameOverDiv">
+        <h1 id="gameOver" class="gameOver">
+
+        </h1>
+  </div>
+
+</body>
+
+</html>
